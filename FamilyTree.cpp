@@ -20,11 +20,12 @@ family::Tree& family::Tree::addFather(string name, string father){
 family::Tree& family::Tree::addMother(string name, string mother){
     return *this;
 }
-string family::Tree::relation(string name){
 
+string family::Tree::relation(string name){
+    return name;
 }
 string family::Tree::find(string relation){
-
+    return relation;
 }
 void family::Tree::display(){
 

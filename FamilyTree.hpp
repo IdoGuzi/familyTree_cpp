@@ -1,13 +1,31 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 using namespace std;
 
 namespace family{
+    class Person{
+      private:
+        string name;
+        Person *father, *mother;
+      public:
+        Person(string name);
+        ~Person();
+
+        string getName(){return this->name;}
+
+        Person* getFather(){return this->father;}
+        void setFather(Person *father){this->father=father;}
+
+        Person* getMother(){return this->mother;}
+        void setMother(Person *mother){this->mother=mother;}
+    };
+
     class Tree{
-    private:
+      private:
         Person *root;
-    public:
+      public:
         Tree(string name);
         ~Tree();
 
@@ -18,23 +36,5 @@ namespace family{
         string find(string relation);
         void display();
         void remove(string name);
-    };
-
-    class Person{
-    private:
-        /* data */
-        string name;
-        Person *father, *mother;
-    public:
-        string getName(){return this->name;}
-
-        Person* getFather(){return this->father;}
-        void setFather(Person *father){this->father=father;}
-
-        Person* getMother(){return this->mother;}
-        void setMother(Person *mother){this->mother=mother;}
-
-        Person(string name);
-        ~Person();
     };
 };
