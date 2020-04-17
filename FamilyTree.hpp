@@ -20,6 +20,8 @@ namespace family{
 
         Person* getMother(){return this->mother;}
         void setMother(Person *mother){this->mother=mother;}
+
+        static string find(Person *p, string relation);
     };
 
     class Tree{
@@ -29,12 +31,17 @@ namespace family{
         Tree(string name);
         ~Tree();
 
-
         Tree& addFather(string name, string father);
         Tree& addMother(string name, string mother);
         string relation(string name);
         string find(string relation);
         void display();
         void remove(string name);
+
+      private:
+        static string gen(string name, Person *p, int level);
     };
+
+    bool isEqualIgnoreCase(string a, string b);
+    bool validRelation(string relation);
 };

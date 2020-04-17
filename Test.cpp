@@ -156,3 +156,9 @@ TEST_CASE("a bit more"){
 
 
 }
+
+TEST_CASE("namespace test"){
+    CHECK(family::isEqualIgnoreCase("I d 0 : sd", "i D 0 : Sd")==true);
+    CHECK(family::validRelation("uncle")==false);
+    CHECK(family::validRelation("great-great-great-grandMother")==true);
+}
