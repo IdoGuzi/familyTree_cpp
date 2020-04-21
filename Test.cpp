@@ -16,12 +16,12 @@ family::Tree* treeFactory(){
 
 TEST_CASE("add mother/father"){
     family::Tree t("Ido");
-    CHECK_THROWS(t.addFather("ido","Dror"));
-    CHECK_THROWS(t.addMother("Ido", "aviva"));
-    CHECK_NOTHROW(t.addFather("Ido", "Dror"));
+    CHECK_THROWS(t.addFather("ido","Dror")); //person case sensitive.
+    CHECK_THROWS(t.addMother("ido", "aviva"));//person case sensitive.
+    CHECK_NOTHROW(t.addFather("Ido", "Dror")); 
     CHECK_NOTHROW(t.addMother("Ido", "Aviva"));
-    CHECK_THROWS(t.addFather("Ido","Dror"));
-    CHECK_THROWS(t.addMother("Ido", "Aviva"));
+    CHECK_THROWS(t.addFather("Ido","Dror")); //already added a father.
+    CHECK_THROWS(t.addMother("Ido", "Aviva"));// already added a mother.
     CHECK_NOTHROW(t.addFather("Dror", "Yosef"));
     CHECK_NOTHROW(t.addMother("Dror", "Hanna"));
     CHECK_NOTHROW(t.addFather("Aviva", "Moshe"));
