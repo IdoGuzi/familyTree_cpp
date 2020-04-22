@@ -41,6 +41,7 @@ namespace family{
       private:
         //recursive search for a person with a specific name
         Person* search(Person *p, string name);
+        Person* findChild(Person *p,string name);
         static string gen(string name, Person *p, int level);
     };
 

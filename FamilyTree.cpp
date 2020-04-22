@@ -43,11 +43,16 @@ family::Tree& family::Tree::addMother(string name, string mother){
 
 string family::Tree::relation(string name){
     if (name==this->root->getName()) return "me";
-    return family::Tree::gen(name,this->root,0);
+    string relation;
+    try{relation=family::Tree::gen(name,this->root,0);}catch(exception e){relation="unrelated";}
+    return relation;
 }
 
 string family::Tree::find(string relation){
-    if (!validRelation(relation)) throw runtime_error("check your input");
+    if (!validRelation(relation)) {
+        string err = "The tree cannot handle the '"+relation+"' relation";
+        throw runtime_error(err);
+    }
     return family::Person::find(this->root,relation);
 }
 
@@ -56,32 +61,37 @@ void family::Tree::display(){
 
 }
 void family::Tree::remove(string name){
-
+    if (name==this->root->getName()) throw runtime_error("cannot remove root");
+    family::Person *child = family::Tree::findChild(this->root,name);
+    if (!child) throw runtime_error("ERROR: this person does not exist in the tree");
+    family::Person *parent;
+    if (child->getMother() && child->getMother()->getName()==name) {
+        parent = child->getMother();
+        child->setMother(nullptr);
+        delete(parent);
+    }else if (child->getFather() && child->getFather()->getName()==name) {
+        parent = child->getFather();
+        child->setFather(nullptr);
+        delete(parent);
+    }else throw runtime_error("ERROR: didn't remove parent (unknown)");
 }
 
 string family::Tree::gen(string name, family::Person *p, int level){
-    //string m="mother",f="father",g="grand",b="great-";
-    string result;
-    if (p->getMother()){
-        if (p->getMother()->getName()==name) result="mother";
+    string ans;
+    if (p->getMother()) if (p->getMother()->getName()==name) ans="mother";
+    if (p->getFather()) if (p->getFather()->getName()==name) ans="father";
+    if (ans.empty()){
+        if (p->getMother()) try{ans=family::Tree::gen(name,p->getMother(),level+1);}catch(exception e){}
+        if (p->getFather()) try{ans=family::Tree::gen(name,p->getFather(),level+1);}catch(exception e){}
+        if (!ans.empty()) return ans;
+        throw runtime_error("ERROR: wasn't found");
     }
-    if (p->getFather()){
-        if (p->getFather()->getName()==name) result="father";
+    if (level>0) {ans="grand"+ans;level--;}
+    while (level>0){
+        ans = "great-"+ans;
+        level--;
     }
-    if (!result.empty()){
-        if (level>0) {result="grand"+result;level--;}
-        while (level) {result="great-"+result;level--;}
-        return result;
-    }else throw runtime_error("ERROR 404: person was not found. ");
-    if (p->getMother()) {
-        string a = family::Tree::gen(name,p->getMother(),level+1);
-        if (!a.empty()) return a;
-    }
-    if (p->getFather()) {
-        string b = family::Tree::gen(name,p->getFather(),level+1);
-        if (!b.empty()) return b;
-    }
-    return "";
+    return ans; 
 }
 
 family::Person* family::Tree::search(family::Person *p, string name){
@@ -98,6 +108,20 @@ family::Person* family::Tree::search(family::Person *p, string name){
     return NULL;
 }
 
+family::Person* family::Tree::findChild(family::Person *p, string name){
+    if (p->getMother()) if (p->getMother()->getName()==name) return p;
+    if (p->getFather()) if (p->getFather()->getName()==name) return p;
+    family::Person *temp;
+    if (p->getMother()) {
+        temp=family::Tree::findChild(p->getMother(),name);
+        if (temp) return temp;
+    }
+    if (p->getFather()) {
+        temp=family::Tree::findChild(p->getFather(),name);
+        if (temp) return temp;
+    }
+    return NULL;
+}
 
 //*** person node ***
 family::Person::Person(string name){
@@ -113,20 +137,16 @@ family::Person::~Person(){
 
 string family::Person::find(family::Person *p, string relation){
     if (family::isEqualIgnoreCase(relation,"me")) return p->getName();
-    if (family::isEqualIgnoreCase(relation,"mother")) return p->getMother()->getName();
-    if (family::isEqualIgnoreCase(relation,"father")) return p->getFather()->getName();
-    if (relation.length()<11) {cout << "test" << endl;}
-    if (relation.length()==11){
+    if (family::isEqualIgnoreCase(relation,"mother")) if (p->getMother()) return p->getMother()->getName();
+    if (family::isEqualIgnoreCase(relation,"father")) if (p->getFather()) return p->getFather()->getName();
+    if (relation.length()==11) {
         relation=relation.substr(5);
     }else relation=relation.substr(6);
-    string a,b;
-    if (p->getMother()){try{a=family::Person::find(p->getMother(),relation);}catch(exception e){}}
-    if (p->getFather()){try{b=family::Person::find(p->getFather(),relation);}catch(exception e){}}
-    
-    if (!a.empty()) return a;
-    if (!b.empty()) return b;
-    throw runtime_error("Error: "+relation+" wasn't found in the family tree");
-    return NULL;
+    string name;
+    if (p->getMother()) try{name=family::Person::find(p->getMother(),relation);}catch(exception e){}
+    if (p->getFather()) try{name=family::Person::find(p->getFather(),relation);}catch(exception e){}
+    if (!name.empty()) return name;
+    throw runtime_error("the related person was not found");
 }
 
 
@@ -149,8 +169,8 @@ bool family::validRelation(string relation){
     if (family::isEqualIgnoreCase(relation,"me")) return true;
     string m="mother",f="father",g="grand",b="great-";
     string checkM=m,checkF=f; 
+    int i = 0;
     while(checkF.length()<=relation.length() && checkM.length()<=relation.length()){
-        int i = 0;
         if (family::isEqualIgnoreCase(relation,checkM)) return true;
         if (family::isEqualIgnoreCase(relation,checkF)) return true;
         if (i==0) {checkM=g+m;checkF=g+f;i++;}

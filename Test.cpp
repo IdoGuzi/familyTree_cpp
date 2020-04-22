@@ -80,6 +80,7 @@ TEST_CASE("numbers"){
     CHECK_NOTHROW(t.remove("2"));
     CHECK(t.relation("4")=="unrelated");
     CHECK_THROWS(t.remove("1")); // should not be able to delete root
+    CHECK(t.relation("9")=="unrelated");
     CHECK_THROWS(t.remove("9"));
     CHECK_NOTHROW(t.addFather("1","6"));
     CHECK(t.find("father")=="6");
@@ -97,7 +98,7 @@ TEST_CASE("letters"){
     CHECK_NOTHROW(t.addFather("a","d"));
     CHECK_NOTHROW(t.addMother("m","mgm"));
     CHECK_NOTHROW(t.addMother("d","dgm"));
-    CHECK_NOTHROW(t.find("gramdmother"));
+    CHECK_NOTHROW(t.find("grandmother"));
     CHECK_NOTHROW(t.addFather("d","dgf"));
     CHECK(t.find("grandfather")=="dgf");
     CHECK_NOTHROW(t.addFather("dgf","dggf"));
@@ -150,7 +151,7 @@ TEST_CASE("a bit more"){
     CHECK_THROWS(t.addMother("me","mother"));
     CHECK_NOTHROW(t.addFather("_+","=_"));
     CHECK_THROWS(t.remove("father"));
-    CHECK_THROWS(t.remove("=_"));
+    CHECK_NOTHROW(t.remove("=_"));
     CHECK(t.find("me")=="_+");
     CHECK(t.relation("_+")=="me");
 
