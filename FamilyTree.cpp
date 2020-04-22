@@ -67,6 +67,7 @@ void family::Tree::display(){
     for (int i=0;i<heapLikeArray->size();i++){
         if (!heapLikeArray->at(i).empty()) cout << i << ": " << heapLikeArray->at(i) << endl;;
     }
+    delete(heapLikeArray);
 }
 
 void family::Tree::remove(string name){
