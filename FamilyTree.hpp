@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 namespace family{
@@ -39,7 +40,7 @@ namespace family{
         void remove(string name);
 
       private:
-        //recursive search for a person with a specific name
+        vector<string>* toArray(Person *p,vector<string> *arr, int index);
         Person* search(Person *p, string name);
         Person* findChild(Person *p,string name);
         static string gen(string name, Person *p, int level);

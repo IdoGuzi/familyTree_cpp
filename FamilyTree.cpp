@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <vector>
 #include "FamilyTree.hpp"
 using namespace std;
 
@@ -58,8 +60,15 @@ string family::Tree::find(string relation){
 
 
 void family::Tree::display(){
-
+    cout << "if a person have index i, his mother index is i*2+1 and his father i*2+2" <<endl;
+    cout << "if a index isn't showing it's not existing in the tree." << endl; 
+    vector<string> *heapLikeArray = new vector<string>(1);
+    heapLikeArray = family::Tree::toArray(this->root,heapLikeArray,0);
+    for (int i=0;i<heapLikeArray->size();i++){
+        if (!heapLikeArray->at(i).empty()) cout << i << ": " << heapLikeArray->at(i) << endl;;
+    }
 }
+
 void family::Tree::remove(string name){
     if (name==this->root->getName()) throw runtime_error("cannot remove root");
     family::Person *child = family::Tree::findChild(this->root,name);
@@ -121,6 +130,20 @@ family::Person* family::Tree::findChild(family::Person *p, string name){
         if (temp) return temp;
     }
     return NULL;
+}
+
+vector<string>* family::Tree::toArray(family::Person *p, vector<string> *arr,int index){
+    if (index*2>arr->size()) {
+        for (int i=arr->size();i<=index*2;i++){arr->insert(arr->begin()+i,string());}
+    }
+    arr->insert(arr->begin()+index,p->getName());
+    if (p->getMother()) {
+        family::Tree::toArray(p->getMother(),arr,index*2+1);
+    }else arr->insert(arr->begin()+(index*2)+1,string(""));
+    if (p->getFather()) {
+        family::Tree::toArray(p->getFather(),arr,index*2+2);
+    }else arr->insert(arr->begin()+(index*2)+2,string(""));
+    return arr;
 }
 
 //*** person node ***
